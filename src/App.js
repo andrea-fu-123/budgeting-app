@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+
+
+import { Route,Routes , Navigate} from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+
+
+import Summary from './pages/Summary.jsx';
+import SpendingHistory from './pages/SpendingHistory.jsx';
+import Login from './pages/Login.jsx';
+
+function Main() {
+
+  
+  return (
+
+    <div className = 'App'>
+      {/* {signInDivVisible && <div id = "signInDiv"></div>}
+      {!signInDivVisible &&  <Button variant="contained" onClick = {(e) => handleSignOut(e)} >Sign Out</Button> } */}
+     
+      <Routes>
+        <Route path="/" element={<Navigate to="/summary" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/summary" element={<Summary />} />
+        <Route path="/history" element={<SpendingHistory />} />
+      </Routes>
+    </div>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Main />
+    </Router>
   );
 }
 
