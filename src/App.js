@@ -18,7 +18,7 @@ function Main() {
       {!signInDivVisible &&  <Button variant="contained" onClick = {(e) => handleSignOut(e)} >Sign Out</Button> } */}
      
       <Routes>
-        <Route path="/" element={<Navigate to="/summary" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/summary" element={<Summary />} />
         <Route path="/history" element={<SpendingHistory />} />

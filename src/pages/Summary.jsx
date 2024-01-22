@@ -3,7 +3,10 @@ import axios from 'axios';
 import './Table.css';
 import { Link, useLocation } from 'react-router-dom';
 import { Tabs, Tab, Button } from '@mui/material';
+import { jwtDecode } from "jwt-decode";
+import { v4 as uuidv4 } from 'uuid';
 const helpers = require('../utils/helpers');
+
 
 
 
@@ -14,15 +17,60 @@ const Summary = () => {
     const [token, setToken] = useState(initialToken)
 
 
-    useEffect( () => {
+    useEffect(() => {
 
+        const fetchUserId = async (token) => {
+            try {
+                const decodedToken = jwtDecode(token)
+                const email = decodedToken.email
+                const users = await axios.get("http://localhost:8800/users")
+                const user = users.data.find(transaction => transaction.email === email);
+    
+                let user_id = -1
+                if (user) {
+                    user_id = user.user_id;
+                    console.log("User ID:", user_id);
+                } else {
+                    try {
+                        // if the user doesn't exist, then add them to the list of users 
+                        const user_id = uuidv4(); // Generate a new UUID for user_id
+
+                        await fetch ('http://localhost:8800/users', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ email , user_id}),
+                    })} catch(err) {
+
+                    }
+                }
+                return user_id
+    
+        } catch (error) {
+                console.error("Error fetching user ID:", error);
+            }
+    
+        }
+    
         const fetchAllTransactions = async () => {
             try {
                 const token = sessionStorage.getItem('token')
-                console.log("Token in Summary.jsx: " + token)
-                const headers = { headers: { 'token': token }}
-                const res = await axios.get("http://localhost:8800/transactions", headers)
-                
+                console.log(token)
+    
+                console.log(48)
+                const user_id = await fetchUserId(token)
+                console.log(50)
+                const decodedToken = jwtDecode(token)
+    
+                const headers = {
+                    headers: {
+                      'token': token,
+                  
+                    }
+                  };
+                const res = await axios.get(`http://localhost:8800/transactions/${user_id}`, headers)
+    
                 setTransactions(res.data)
             } catch (err) {
                 console.log("ERROR: " + err)
@@ -30,9 +78,8 @@ const Summary = () => {
             }
         }
         fetchAllTransactions()
-        
+    
     }, [])
-
 
     let summaryTransactions = helpers.getSummaryList(transactions, spendable)
 
@@ -49,7 +96,7 @@ const Summary = () => {
     }
 
     const { pathname } = useLocation();
-    
+
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 16px' }}>
@@ -57,7 +104,7 @@ const Summary = () => {
                     <Tab label="Summary" component={Link} to="/summary" value="/summary" />
                     <Tab label="Spending History" component={Link} to="/history" value="/history" />
                 </Tabs>
-                <Button onClick={handleSignOut} variant="outlined" color="error" style={{ marginRight: 0 } }>Sign out</Button>
+                <Button onClick={handleSignOut} variant="outlined" color="error" style={{ marginRight: 0 }}>Sign out</Button>
             </div>
             <div style={{ textAlign: 'center' }}>
 
