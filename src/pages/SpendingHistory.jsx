@@ -38,10 +38,7 @@ const SpendingHistory = () => {
     const fetchAllTransactions = async () => {
         try {
             const token = sessionStorage.getItem('token')
-
-            console.log(48)
             const user_id = await fetchUserId(token)
-            console.log(50)
             const decodedToken = jwtDecode(token)
             console.log("user email: " + decodedToken.email)
             console.log("user id: " + user_id)
